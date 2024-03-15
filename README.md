@@ -14,17 +14,16 @@ Rapid Route is a cab booking system web application designed to provide efficien
 
 ## Screenshots
 
-### Home Page
-![Home Page](/screenshots/home-page.png)
-*The home page displays available routes and booking options.*
+### Booking Form
+![Booking Form](/bookingform.png)
+*The home page displays booking form with further available cabs.*
 
-### Booking Confirmation
-![Booking Confirmation](/screenshots/booking-confirmation.png)
-*Upon successful booking, users receive a confirmation message with details.*
-
-### Admin Dashboard
-![Admin Dashboard](/screenshots/admin-dashboard.png)
-*Admins can manage bookings and perform administrative tasks.*
+### Previous Bookings
+![Previous Bookings](/BookingAndCabSection.png)
+*Here Admin can manage bookings and even edit cab details.*
+### Booking Mail Confirmation
+![Booking Mail Confirmation](/bookingmailconfirmation.png)
+*As Soon as cab is booked a booking confirmation mail is sended to the user*
 
 ## Technologies Used
 
