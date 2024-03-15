@@ -296,4 +296,57 @@ const deleteBooking = async (req, res) => {
 };
 
 
-export { checkBooking, createBooking, getBookings , deleteBooking};
+const editBooking = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const { name, email, source, destination, startTime, cabId, date } = req.body;
+
+    // Check if booking details are provided
+    if (!name || !email || !source || !destination || !startTime || !cabId || !date) {
+      return res.status(400).json({ message: "Booking details are incomplete" });
+    }
+
+    // Find the booking by ID
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    // Check if the chosen cab exists and is available
+    const chosenCab = await Cab.findById(cabId);
+    if (!chosenCab) {
+      return res.status(404).json({ message: "Cab not found" });
+    }
+    // Check if the chosen cab is available for the updated time range
+    const startTimeMoment = moment(`${date} ${startTime}`, "YYYY-MM-DD h:mm A");
+    const endTimeMoment = startTimeMoment.clone().add(booking.duration, "minutes");
+    const cabBooked = await isCabBooked(cabId, startTimeMoment.format("YYYY-MM-DD h:mm A"), endTimeMoment.format("YYYY-MM-DD h:mm A"));
+    if (cabBooked) {
+      return res.status(400).json({
+        message: "Chosen cab is already booked for the specified time range",
+      });
+    }
+
+    // Update the booking details
+    booking.user.name = name;
+    booking.user.email = email;
+    booking.source = source;
+    booking.destination = destination;
+    booking.startTime = startTimeMoment.format("YYYY-MM-DD h:mm A");
+    booking.endTime = endTimeMoment.format("YYYY-MM-DD h:mm A");
+    booking.cab = cabId;
+    booking.date = date;
+
+    // Save the updated booking
+    await booking.save();
+
+    // Return the updated booking
+    res.json({ message: "Booking updated successfully", booking });
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export { checkBooking, createBooking, getBookings , deleteBooking, editBooking};

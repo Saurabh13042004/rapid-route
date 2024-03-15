@@ -1,7 +1,5 @@
-// bookingRoutes.js
-
 import express from 'express';
-import { checkBooking, createBooking , getBookings , deleteBooking} from '../controllers/bookingController.js';
+import { checkBooking, createBooking, getBookings, deleteBooking, editBooking } from '../controllers/bookingController.js';
 
 const router = express.Router();
 
@@ -11,9 +9,13 @@ router.post('/check', checkBooking);
 // Route for creating a new booking
 router.post('/create', createBooking);
 
-router.get('/',getBookings);
+// Route for getting all bookings
+router.get('/', getBookings);
 
-router.delete('/:id',deleteBooking);
+// Route for deleting a booking by ID
+router.delete('/:id', deleteBooking);
+
+// Route for editing a booking by ID
+router.put('/:id', editBooking);
 
 export default router;
-
