@@ -20,10 +20,12 @@ export const BookingProvider = ({ children }) => {
   const apiURL = "https://rapid-route.onrender.com";
 
   const [previousBookings, setPreviousBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [availableCabs, setAvailableCabs] = useState([]);
   const [selectedCab, setSelectedCab] = useState(null);
   const [isFetchingCabs, setIsFetchingCabs] = useState(false);
+  const [allCabs, setAllCabs] = useState([]);
   const [bookingStatus, setBookingStatus] = useState(null);
   const [bookingError, setBookingError] = useState(null);
   const [toast, setToast] = useState(null); // New toast state
@@ -49,6 +51,7 @@ export const BookingProvider = ({ children }) => {
 
   useEffect(() => {
     fetchBookings();
+    fetchAllCabs();
   }, []);
 
   const showToast = (message, status) => {
@@ -143,6 +146,9 @@ export const BookingProvider = ({ children }) => {
     }
   };
 
+
+  
+
   const resetFormFields = () => {
     setFormData({
       name: "",
@@ -173,6 +179,44 @@ export const BookingProvider = ({ children }) => {
   }
 
 
+  const fetchAllCabs = async () => {
+    try {
+      const response = await fetch(`${apiURL}/api/cabs`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch cabs');
+      }
+      const data = await response.json();
+      setAllCabs(data); 
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEditCab = async (editedCab) => {
+    try {
+      const response = await fetch(`${apiURL}/api/cabs/${editedCab._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedCab),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update cab");
+      }
+
+      const updatedCab = await response.json();
+
+      // You can handle the updated cab data as needed, e.g., updating state
+      fetchAllCabs(); // Fetch all cabs again to update the list
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+
   return (
     <BookingContext.Provider
       value={{
@@ -195,6 +239,8 @@ export const BookingProvider = ({ children }) => {
         handleDeleteBooking,
         showToast,
         loading,
+        allCabs,
+        handleEditCab,
         hideToast,
       }}
     >
