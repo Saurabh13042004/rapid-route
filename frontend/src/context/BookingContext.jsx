@@ -17,7 +17,7 @@ export const BookingProvider = ({ children }) => {
   });
 
 
-  const apiURL = "https://rapid-route.onrender.com/";
+  const apiURL = "https://rapid-route.onrender.com";
 
   const [previousBookings, setPreviousBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export const BookingProvider = ({ children }) => {
   const [toast, setToast] = useState(null); // New toast state
 
   useEffect(() => {
-    fetch("/api/bookings/")
+    fetch(`${apiURL}/api/bookings/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch bookings");

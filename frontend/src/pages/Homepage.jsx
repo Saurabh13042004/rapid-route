@@ -11,7 +11,7 @@ const Homepage = () => {
 
   useEffect(() => {
     // Fetch bookings when the component mounts
-    fetch("/api/bookings/")
+    fetch("https://rapid-route.onrender.com/api/bookings/")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch bookings");
@@ -27,6 +27,9 @@ const Homepage = () => {
         setLoading(false);
       });
   }, []);
+
+
+  console.log(bookings);
 
   return (
     <div className="">
