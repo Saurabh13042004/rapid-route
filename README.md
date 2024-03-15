@@ -43,7 +43,7 @@ To run Rapid Route locally, follow these steps:
 
 1. Clone the repository:  
 ```bash
-git clone https://github.com/your-username/rapid-route.git
+git clone https://github.com/Saurabh13042004/rapid-route.git
 ```
 2. Navigate to the project directory:
 ```bash
