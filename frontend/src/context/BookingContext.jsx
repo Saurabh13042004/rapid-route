@@ -28,22 +28,27 @@ export const BookingProvider = ({ children }) => {
   const [bookingError, setBookingError] = useState(null);
   const [toast, setToast] = useState(null); // New toast state
 
+
+
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${apiURL}/api/bookings/`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch bookings");
+      }
+      const data = await response.json();
+      setPreviousBookings(data.bookings);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
-    fetch(`${apiURL}/api/bookings/`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch bookings");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setPreviousBookings(data.bookings);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
+    fetchBookings();
   }, []);
 
   const showToast = (message, status) => {
@@ -125,6 +130,8 @@ export const BookingProvider = ({ children }) => {
         setTimeout(() => setBookingStatus(null), 2000);
         resetFormFields();
       }
+      availableCabs.length = 0; // Clear available cabs
+      fetchBookings(); // Fetch bookings again to update the list
     } catch (error) {
       console.error(error);
       setBookingError(error.message); // Set booking error message
@@ -187,6 +194,7 @@ export const BookingProvider = ({ children }) => {
         previousBookings,
         handleDeleteBooking,
         showToast,
+        loading,
         hideToast,
       }}
     >

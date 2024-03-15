@@ -1,13 +1,12 @@
-import React from 'react'
-import { BiLoaderAlt } from 'react-icons/bi'
+import React from 'react';
+import { BiLoaderAlt } from 'react-icons/bi';
 
 function Loader() {
   return (
-    <div>
-       <BiLoaderAlt className="animate-spin" />
-
+    <div className="flex justify-center">
+      <BiLoaderAlt className="animate-spin text-4xl" />
     </div>
-  )
+  );
 }
 
-export default Loader
+export default Loader;

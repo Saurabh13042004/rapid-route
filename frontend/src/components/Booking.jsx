@@ -82,13 +82,16 @@ function Bookings() {
               onChange={handleChange}
             >
               <option value="">Going to</option>
-              {alphabetOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
+              {alphabetOptions
+                .filter((option) => option !== formData.source) // Filter out selected source
+                .map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
             </select>
           </div>
+
           <div className="flex items-center space-x-2">
             <CiCalendarDate className="text-gray-400" />
             <input
@@ -97,6 +100,7 @@ function Bookings() {
               type="date"
               name="date"
               value={formData.date}
+              min={new Date().toISOString().split('T')[0]}
               onChange={handleChange}
             />
           </div>
@@ -141,7 +145,7 @@ function Bookings() {
             Search
           </button>
         </form>
-        {(isFetchingCabs || isBookingInProgress) && <Loader/>}
+        {(isFetchingCabs || isBookingInProgress) && <Loader />}
         {availableCabs.length > 0 && (
           <div className="mt-4">
             <select
@@ -171,9 +175,18 @@ function Bookings() {
           </div>
         )}
         {/* Toasts */}
-        {bookingStatus === "success" && <Toast type="success" message="Booking Created Successfully." />}
-        {bookingStatus === "success" && <Toast type="info" message="Booking confirmation email has been sent." />}
-        {bookingStatus === "error" && <Toast type="error" message={bookingError} />}
+        {bookingStatus === "success" && (
+          <Toast type="success" message="Booking Created Successfully." />
+        )}
+        {bookingStatus === "success" && (
+          <Toast
+            type="info"
+            message="Booking confirmation email has been sent."
+          />
+        )}
+        {bookingStatus === "error" && (
+          <Toast type="error" message={bookingError} />
+        )}
       </div>
       <div className="max-w-6xl mx-auto p-4 bg-white rounded-md shadow-md block mb-8">
         <div className="flex items-center mb-4">
@@ -185,10 +198,7 @@ function Bookings() {
             <Loader />
           ) : (
             previousBookings.map((booking, index) => (
-              <RecentBooking
-                key={index}
-                booking={booking}
-              />
+              <RecentBooking key={index} booking={booking} />
             ))
           )}
         </div>
