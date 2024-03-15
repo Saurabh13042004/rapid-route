@@ -67,6 +67,22 @@ export const BookingProvider = ({ children }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if(name === 'date') {
+      const date = new Date(value);
+      const today = new Date();
+      if(date < today) {
+        setBookingError("Please select a valid date");
+        setBookingStatus("error");
+        setTimeout(() => {
+          setBookingStatus(null);
+          setBookingError(null);
+        }, 2000);
+        return;
+      }
+    }
+    
+
     setFormData({ ...formData, [name]: value });
   };
 
