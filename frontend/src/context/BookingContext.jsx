@@ -16,6 +16,9 @@ export const BookingProvider = ({ children }) => {
     date: "",
   });
 
+
+  const apiURL = "https://rapid-route.onrender.com/";
+
   const [previousBookings, setPreviousBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [availableCabs, setAvailableCabs] = useState([]);
@@ -77,7 +80,7 @@ export const BookingProvider = ({ children }) => {
 
     setIsFetchingCabs(true);
     try {
-      const response = await fetch("/api/bookings/check", {
+      const response = await fetch(`${apiURL}/api/bookings/check`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +106,7 @@ export const BookingProvider = ({ children }) => {
 
   const handleCreateBooking = async () => {
     try {
-      const response = await fetch("/api/bookings/create", {
+      const response = await fetch(`${apiURL}/api/bookings/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -147,7 +150,7 @@ export const BookingProvider = ({ children }) => {
 
   const handleDeleteBooking = async (bookingId) => {
     try {
-      const response = await fetch(`/api/bookings/${bookingId}`, {
+      const response = await fetch(`${apiURL}/api/bookings/${bookingId}`, {
         method: "DELETE",
       });
       if (!response.ok) {
