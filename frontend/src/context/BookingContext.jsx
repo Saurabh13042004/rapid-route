@@ -91,9 +91,11 @@ export const BookingProvider = ({ children }) => {
       !formData.source ||
       !formData.destination ||
       !formData.startTime ||
-      !formData.date
+      !formData.date ||
+      !formData.name ||
+      !formData.email
     ) {
-      setBookingError("Please fill in all the fields");
+      setBookingError("Please fill all the fields");
       setBookingStatus("error");
       setTimeout(() => {
         setBookingStatus(null);
