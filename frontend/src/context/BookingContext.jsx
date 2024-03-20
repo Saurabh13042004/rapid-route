@@ -67,24 +67,28 @@ export const BookingProvider = ({ children }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if(name === 'date') {
-      const date = new Date(value);
+  
+    if (name === 'date') {
+      const selectedDate = new Date(value);
       const today = new Date();
-      if(date < today) {
+      const selectedDateWithoutTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+      const todayWithoutTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      
+      if (selectedDateWithoutTime < todayWithoutTime) {
         setBookingError("Please select a valid date");
         setBookingStatus("error");
         setTimeout(() => {
           setBookingStatus(null);
           setBookingError(null);
+          
         }, 2000);
-        return;
+        return ;
       }
     }
-    
-
+  
     setFormData({ ...formData, [name]: value });
   };
+  
 
   const handleCheckAvailableCabs = async () => {
     if (
