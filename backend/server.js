@@ -1,5 +1,4 @@
 import express from 'express'
-// import cabsRoutes from './routes/cabsRoutes.js'
 import bookingsRoutes from './routes/bookingsRoute.js'
 import userRoutes from './routes/usersRoute.js'
 import cabRoutes from './routes/cabsRoute.js'
@@ -13,7 +12,7 @@ const port = process.env.PORT;
 
 
 
-connectDB(); // Connect to the database
+connectDB();
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
