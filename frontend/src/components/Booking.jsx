@@ -10,49 +10,25 @@ import { MdOutlineEmail } from "react-icons/md";
 import { BiLoaderAlt } from "react-icons/bi";
 import Loader from "../components/Loader";
 import RecentBooking from "../components/RecentBooking";
-import Toast from "../components/Toast";
 import Cabs from "./Cabs";
+import toast, { Toaster } from "react-hot-toast";
 
 function Bookings() {
   const {
     formData,
-    availableCabs,
-    selectedCab,
-    isFetchingCabs,
-    bookingError,
-    bookingStatus,
     previousBookings,
     loading,
+    error,
+    availableCabs,
+    selectedCab,
+    allCabs,
     handleChange,
     handleCheckAvailableCabs,
     handleCabSelection,
     handleCreateBooking,
-    handleDeleteBooking,
-    showToast,
-    hideToast,
-    allCabs
   } = useBookingContext();
 
   const alphabetOptions = ["A", "B", "C", "D", "E", "F"];
-  const [isBookingInProgress, setIsBookingInProgress] = useState(false);
-
-  useEffect(() => {
-    if (bookingStatus === "success") {
-      showToast("Booking Created Successfully.", "success");
-      setTimeout(() => {
-        showToast("Booking confirmation email has been sent.", "info");
-      }, 2000); // Show confirmation after 2 seconds
-    } else if (bookingStatus === "error") {
-      showToast(bookingError, "error");
-    }
-  }, [bookingStatus, bookingError, showToast]);
-
-  const handleBookNow = async () => {
-    setIsBookingInProgress(true);
-    await handleCreateBooking();
-    setIsBookingInProgress(false);
-  };
-
   return (
     <>
       <div className="max-w-6xl mx-auto p-4 bg-white rounded-md shadow-md block mb-8">
@@ -102,7 +78,7 @@ function Bookings() {
               type="date"
               name="date"
               value={formData.date}
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date().toISOString().split("T")[0]}
               onChange={handleChange}
             />
           </div>
@@ -147,7 +123,8 @@ function Bookings() {
             Search
           </button>
         </form>
-        {(isFetchingCabs || isBookingInProgress) && <Loader />}
+
+        {/* Available cabs */}
         {availableCabs.length > 0 && (
           <div className="mt-4">
             <select
@@ -167,7 +144,9 @@ function Bookings() {
                 <button
                   className="btn btn-primary flex items-center"
                   type="button"
-                  onClick={handleBookNow}
+                  onClick={() => {
+                    handleCreateBooking();
+                  }}
                 >
                   <RiTaxiLine className="w-5 h-5 mr-2" />
                   Book Now
@@ -176,25 +155,16 @@ function Bookings() {
             )}
           </div>
         )}
-        {/* Toasts */}
-        {bookingStatus === "success" && (
-          <Toast type="success" message="Booking Created Successfully." />
-        )}
-        {bookingStatus === "success" && (
-          <Toast
-            type="info"
-            message="Booking confirmation email has been sent."
-          />
-        )}
-        {bookingStatus === "error" && (
-          <Toast type="error" message={bookingError} />
-        )}
       </div>
+
+      {/* Previous bookings */}
       <div className="max-w-6xl mx-auto p-4 bg-white rounded-md shadow-md block mb-8">
+        {/* Previous bookings title */}
         <div className="flex items-center mb-4">
           <RiSearchLine className="w-6 h-6 mr-2" />
           <h2 className="text-lg font-bold">Previous Bookings</h2>
         </div>
+        {/* Previous bookings list */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {loading ? (
             <Loader />
@@ -205,24 +175,22 @@ function Bookings() {
           )}
         </div>
       </div>
+
+      {/* All cabs */}
       <div className="max-w-6xl mx-auto p-4 bg-white rounded-md shadow-md block mb-8">
+        {/* All cabs title */}
         <div className="flex items-center mb-4">
           <RiSearchLine className="w-6 h-6 mr-2" />
           <h2 className="text-lg font-bold">All Cabs</h2>
         </div>
+        {/* All cabs list */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {loading ? (
             <Loader />
           ) : (
-            allCabs.map((cab, index) => (
-              <Cabs key={index} 
-              cab={cab}
-              />
-            ))
+            allCabs.map((cab, index) => <Cabs key={index} cab={cab} />)
           )}
         </div>
-      </div>
-      <div>
       </div>
     </>
   );

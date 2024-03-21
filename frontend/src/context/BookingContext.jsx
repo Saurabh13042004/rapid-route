@@ -1,6 +1,7 @@
-// context/BookingContext.js
-
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useContext, useEffect } from "react";
+import toast,{Toaster} from "react-hot-toast";
 
 const BookingContext = createContext();
 
@@ -16,7 +17,6 @@ export const BookingProvider = ({ children }) => {
     date: "",
   });
 
-
   const apiURL = "https://rapid-route.onrender.com";
 
   const [previousBookings, setPreviousBookings] = useState([]);
@@ -24,16 +24,13 @@ export const BookingProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [availableCabs, setAvailableCabs] = useState([]);
   const [selectedCab, setSelectedCab] = useState(null);
-  const [isFetchingCabs, setIsFetchingCabs] = useState(false);
   const [allCabs, setAllCabs] = useState([]);
-  const [bookingStatus, setBookingStatus] = useState(null);
-  const [bookingError, setBookingError] = useState(null);
-  const [toast, setToast] = useState(null); // New toast state
 
-
+  const showToast = (message, type) => {
+    toast(message, { duration: 2000, type: type });
+  };
 
   const fetchBookings = async () => {
-    setLoading(true);
     try {
       const response = await fetch(`${apiURL}/api/bookings/`);
       if (!response.ok) {
@@ -44,51 +41,42 @@ export const BookingProvider = ({ children }) => {
       setLoading(false);
     } catch (error) {
       console.error(error);
+      showToast("Failed to fetch bookings", "error");
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchBookings();
     fetchAllCabs();
   }, []);
 
-  const showToast = (message, status) => {
-    setToast({ message, status });
-    setTimeout(() => {
-      hideToast();
-    }, 3000); // Set timeout to hide toast after 3 seconds
-  };
-
-  const hideToast = () => {
-    setToast(null);
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
-    if (name === 'date') {
+
+    if (name === "date") {
       const selectedDate = new Date(value);
       const today = new Date();
-      const selectedDateWithoutTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-      const todayWithoutTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      
+      const selectedDateWithoutTime = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      const todayWithoutTime = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+
       if (selectedDateWithoutTime < todayWithoutTime) {
-        setBookingError("Please select a valid date");
-        setBookingStatus("error");
-        setTimeout(() => {
-          setBookingStatus(null);
-          setBookingError(null);
-          
-        }, 2000);
-        return ;
+        setError("Please select a valid date");
+        showToast("Please select a valid date", "error");
+        return;
       }
     }
-  
+
     setFormData({ ...formData, [name]: value });
   };
-  
 
   const handleCheckAvailableCabs = async () => {
     if (
@@ -99,16 +87,12 @@ export const BookingProvider = ({ children }) => {
       !formData.name ||
       !formData.email
     ) {
-      setBookingError("Please fill all the fields");
-      setBookingStatus("error");
-      setTimeout(() => {
-        setBookingStatus(null);
-        setBookingError(null);
-      }, 2000);
+      setError("Please fill all the fields");
+      showToast("Please fill all the fields", "error");
       return;
     }
 
-    setIsFetchingCabs(true);
+    setLoading(true);
     try {
       const response = await fetch(`${apiURL}/api/bookings/check`, {
         method: "POST",
@@ -119,14 +103,16 @@ export const BookingProvider = ({ children }) => {
       });
       if (!response.ok) {
         throw new Error("Failed to fetch available cabs");
+
       }
       const data = await response.json();
       setAvailableCabs(data.availableCabsWithRates);
     } catch (error) {
       console.error(error);
-      setBookingStatus("error");
+      setError(error.message);
+      showToast(error.message, "error");
     } finally {
-      setIsFetchingCabs(false);
+      setLoading(false);
     }
   };
 
@@ -135,6 +121,11 @@ export const BookingProvider = ({ children }) => {
   };
 
   const handleCreateBooking = async () => {
+    if (!selectedCab) {
+      setError("Please select a cab");
+      showToast("Please select a cab", "error");
+      return;
+    }
     try {
       const response = await fetch(`${apiURL}/api/bookings/create`, {
         method: "POST",
@@ -150,26 +141,18 @@ export const BookingProvider = ({ children }) => {
 
       if (!response.ok) {
         throw new Error(responseData.message); // Throw error message received from server
-      } else {
-        setBookingStatus("success");
-        setTimeout(() => setBookingStatus(null), 2000);
-        resetFormFields();
       }
       availableCabs.length = 0; // Clear available cabs
       fetchBookings(); // Fetch bookings again to update the list
+      resetFormFields(); // Reset form fields
+      showToast("Booking Created Successfully.", "success");
+      showToast("Booking Confirmation is sent to your email.", "success");
     } catch (error) {
       console.error(error);
-      setBookingError(error.message); // Set booking error message
-      setBookingStatus("error");
-      setTimeout(() => {
-        setBookingStatus(null);
-        setBookingError(null); // Clear error message after displaying
-      }, 2000);
+      setError(error.message);
+      showToast(error.message, "error");
     }
   };
-
-
-  
 
   const resetFormFields = () => {
     setFormData({
@@ -181,7 +164,6 @@ export const BookingProvider = ({ children }) => {
       date: "",
     });
   };
-
 
   const handleDeleteBooking = async (bookingId) => {
     try {
@@ -195,21 +177,25 @@ export const BookingProvider = ({ children }) => {
       setPreviousBookings((previousBookings) =>
         previousBookings.filter((booking) => booking._id !== bookingId)
       );
+      showToast("Booking Deleted Successfully.", "success");
     } catch (error) {
       console.error(error);
+      setError(error.message);
+      showToast(error.message, "error");
     }
-  }
-
+  };
 
   const fetchAllCabs = async () => {
     try {
       const response = await fetch(`${apiURL}/api/cabs`);
       if (!response.ok) {
-        throw new Error('Failed to fetch cabs');
+        throw new Error("Failed to fetch cabs");
       }
       const data = await response.json();
-      setAllCabs(data); 
+      setAllCabs(data);
     } catch (error) {
+      setError(error.message);
+      showToast(error.message, "error");
       console.error(error);
     }
   };
@@ -224,48 +210,46 @@ export const BookingProvider = ({ children }) => {
         body: JSON.stringify(editedCab),
       });
 
+
+
       if (!response.ok) {
         throw new Error("Failed to update cab");
       }
 
       const updatedCab = await response.json();
 
+      showToast("Cab Updated Successfully.", "success");
+
       // You can handle the updated cab data as needed, e.g., updating state
-      fetchAllCabs(); // Fetch all cabs again to update the list
+      fetchAllCabs();
     } catch (error) {
       console.error(error);
+      setError(error.message);
+      showToast(error.message, "error");
     }
   };
-
-
 
   return (
     <BookingContext.Provider
       value={{
         formData,
         setFormData,
+        previousBookings,
+        loading,
+        error,
         availableCabs,
-        setAvailableCabs,
         selectedCab,
-        setSelectedCab,
-        isFetchingCabs,
-        setIsFetchingCabs,
-        bookingStatus,
-        setBookingStatus,
-        bookingError, // Provide booking error to components
+        allCabs,
         handleChange,
         handleCheckAvailableCabs,
         handleCabSelection,
         handleCreateBooking,
-        previousBookings,
         handleDeleteBooking,
-        showToast,
-        loading,
-        allCabs,
         handleEditCab,
-        hideToast,
+        showToast,
       }}
     >
+      <Toaster />
       {children}
     </BookingContext.Provider>
   );

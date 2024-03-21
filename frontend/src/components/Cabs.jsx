@@ -12,18 +12,15 @@ function Cabs({ cab }) {
 
   const handleEdit = () => {
     setEditMode(true);
-    // Initialize editedCab state with current cab details
     setEditedCab(cab);
   };
 
   const handleSave = async () => {
     try {
-      // Call the edit function from context with the edited cab details
       await handleEditCab(editedCab);
       setEditMode(false); // Exit edit mode
     } catch (error) {
       console.error("Error updating cab:", error);
-      // Handle error
     }
   };
 
