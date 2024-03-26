@@ -31,6 +31,7 @@ export const BookingProvider = ({ children }) => {
   };
 
   const fetchBookings = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${apiURL}/api/bookings/`);
       if (!response.ok) {
@@ -53,6 +54,22 @@ export const BookingProvider = ({ children }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // const today = new Date();
+    // const currDate = `${new Date().toISOString().split('T')[0]}`
+    // console.log(currDate)
+
+    // const currTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+    // console.log(currTime)
+    
+    // console.log("asadasd" + formData.date)
+    
+    // if(name == "startTime" && formData.date == currDate && currTime <= value ){
+    //   setError("Please select correct timings for the ride");
+    //   showToast("Please select correct timings for the ride","error");
+    //   return ;
+    // }
+
+
 
     if (name === "date") {
       const selectedDate = new Date(value);
@@ -79,6 +96,20 @@ export const BookingProvider = ({ children }) => {
   };
 
   const handleCheckAvailableCabs = async () => {
+
+    // const today = new Date();
+    // const currDate = `${new Date().toISOString().split('T')[0]}`
+    // console.log(currDate)
+
+    // const currTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+    // console.log(currTime)
+    // console.log(formData.startTime)
+    // if(formData.date == currDate && currTime <= formData.startTime ){
+    //   setError("Please select correct timings for the ride");
+    //   showToast("Please select correct timings for the ride","error");
+    //   return ;
+    // }
+
     if (
       !formData.source ||
       !formData.destination ||
@@ -90,6 +121,18 @@ export const BookingProvider = ({ children }) => {
       setError("Please fill all the fields");
       showToast("Please fill all the fields", "error");
       return;
+    }
+
+
+    if(!formData.email.trim()){
+      setError("Email is required");
+      showToast("Email is required","error");
+      return ;
+    }
+    else if(!/\S+@\S+\.\S+/.test(formData.email)){
+        setError("Email is invalid");
+        showToast("Email is invalid","error");
+        return;
     }
 
     setLoading(true);
@@ -121,12 +164,14 @@ export const BookingProvider = ({ children }) => {
   };
 
   const handleCreateBooking = async () => {
+    
     if (!selectedCab) {
       setError("Please select a cab");
       showToast("Please select a cab", "error");
       return;
     }
     try {
+      setLoading(true);
       const response = await fetch(`${apiURL}/api/bookings/create`, {
         method: "POST",
         headers: {
@@ -152,6 +197,7 @@ export const BookingProvider = ({ children }) => {
       setError(error.message);
       showToast(error.message, "error");
     }
+    setLoading(false);
   };
 
   const resetFormFields = () => {
@@ -186,6 +232,7 @@ export const BookingProvider = ({ children }) => {
   };
 
   const fetchAllCabs = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${apiURL}/api/cabs`);
       if (!response.ok) {
@@ -198,6 +245,7 @@ export const BookingProvider = ({ children }) => {
       showToast(error.message, "error");
       console.error(error);
     }
+    setLoading(false);
   };
 
   const handleEditCab = async (editedCab) => {

@@ -124,7 +124,7 @@ function Bookings() {
           </button>
         </form>
 
-        {/* Available cabs */}
+        {loading && <Loader />}
         {availableCabs.length > 0 && (
           <div className="mt-4">
             <select
@@ -149,7 +149,7 @@ function Bookings() {
                   }}
                 >
                   <RiTaxiLine className="w-5 h-5 mr-2" />
-                  Book Now
+                  {loading ? <><BiLoaderAlt className="animate-spin" /> Booking in progress ...</> : "Book Now"}
                 </button>
               </div>
             )}
@@ -157,22 +157,20 @@ function Bookings() {
         )}
       </div>
 
-      {/* Previous bookings */}
+     
       <div className="max-w-6xl mx-auto p-4 bg-white rounded-md shadow-md block mb-8">
-        {/* Previous bookings title */}
+        
         <div className="flex items-center mb-4">
           <RiSearchLine className="w-6 h-6 mr-2" />
           <h2 className="text-lg font-bold">Previous Bookings</h2>
         </div>
-        {/* Previous bookings list */}
+       
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {loading ? (
-            <Loader />
-          ) : (
-            previousBookings.map((booking, index) => (
+          {
+           previousBookings.map((booking, index) => (
               <RecentBooking key={index} booking={booking} />
             ))
-          )}
+          }
         </div>
       </div>
 
@@ -185,11 +183,9 @@ function Bookings() {
         </div>
         {/* All cabs list */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {loading ? (
-            <Loader />
-          ) : (
+          { 
             allCabs.map((cab, index) => <Cabs key={index} cab={cab} />)
-          )}
+          }
         </div>
       </div>
     </>

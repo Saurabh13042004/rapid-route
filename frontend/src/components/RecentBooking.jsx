@@ -33,10 +33,7 @@ function RecentBooking({ booking }) {
       key={booking._id}
       className="border border-gray-200 rounded-md p-4 flex flex-col justify-between"
     >
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
+      
           <div>
             <p className="text-sm font-semibold">
               User Name: {booking.user.name}
@@ -60,8 +57,7 @@ function RecentBooking({ booking }) {
           >
             <RiDeleteBin6Line className="w-5 h-5" />
           </button>
-        </>
-      )}
+     
     </div>
   );
 }
