@@ -54,6 +54,7 @@ export const BookingProvider = ({ children }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     // const today = new Date();
     // const currDate = `${new Date().toISOString().split('T')[0]}`
     // console.log(currDate)
@@ -109,6 +110,19 @@ export const BookingProvider = ({ children }) => {
     //   showToast("Please select correct timings for the ride","error");
     //   return ;
     // }
+
+    const today = new Date();
+    const currDate = `${new Date().toISOString().split('T')[0]}`
+    
+    if(formData.date == currDate){
+      const currTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+      if(currTime > formData.startTime){
+        setError("Please select correct timings for the ride");
+        showToast("Please select correct timings for the ride","error");
+        return ;
+      }
+    }
+    
 
     if (
       !formData.source ||
